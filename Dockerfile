@@ -1,14 +1,12 @@
-FROM ubuntu:14.04
-MAINTAINER Jason Wilder <jason@influxdb.com>
+FROM haproxy:1.6.5-alpine
 
-RUN apt-get update
-RUN apt-get install -y wget python python-pip python-dev libssl-dev libffi-dev bash
+RUN apk add --no-cache wget ca-certificates bash python py-pip
 
 RUN mkdir /app
 WORKDIR /app
 
-RUN wget https://github.com/jwilder/docker-gen/releases/download/0.3.3/docker-gen-linux-amd64-0.3.3.tar.gz
-RUN tar xvzf docker-gen-linux-amd64-0.3.3.tar.gz -C /usr/local/bin
+RUN wget https://github.com/jwilder/docker-gen/releases/download/0.7.3/docker-gen-alpine-linux-amd64-0.7.3.tar.gz
+RUN tar xvzf docker-gen-alpine-linux-amd64-0.7.3.tar.gz -C /bin
 
 RUN pip install python-etcd
 
