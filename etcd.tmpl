@@ -34,7 +34,7 @@ except (etcd.EtcdKeyNotFound, KeyError):
 
 {{ if $address.HostPort}}
 
-client.write("/backends/{{ $value.Image.Repository}}_{{ $value.Image.Tag}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local.Env.HOST_IP }}:{{ $address.HostPort }}", ttl=15)
+client.write("/backends/{{ $value.Image.Tag}}/{{ $value.Image.Repository}}_{{ $value.Image.Tag}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local.Env.HOST_IP }}:{{ $address.HostPort }}", ttl=15)
 
 {{ end }}
 {{ end }}
