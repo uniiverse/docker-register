@@ -32,10 +32,15 @@ except (etcd.EtcdKeyNotFound, KeyError):
 {{ if eq $addrLen 1 }}
 {{ with $address := index $value.Addresses 0 }}
 
+{{ $discoverable := $value.Labels.discoverable }}
+{{ if $discoverable }}
+{{ if eq $discoverable "true" }}
 {{ if $address.HostPort}}
 
 client.write("/backends/{{ index $value.Labels "namespace"}}/{{ index $value.Labels "subdomain"}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local.Env.HOST_IP }}:{{ $address.HostPort }}", ttl=15)
 
+{{ end }}
+{{ end }}
 {{ end }}
 {{ end }}
 {{end}}
