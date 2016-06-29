@@ -8,6 +8,14 @@ etcd_user = "{{ .Env.ETCD_USER }}"
 etcd_pass = "{{ .Env.ETCD_PASS }}"
 etcd_proto = "{{ .Env.ETCD_PROTO }}"
 etcd_cacert = "{{ .Env.ETCD_CACERT }}"
+etcd_cacert_path = "/cacert.pem"
+
+cert_file = open(etcd_cacert_path, "w")
+cert_file.write("-----BEGIN CERTIFICATE-----\n")
+cert_file.write(etcd_cacert)
+cert_file.write("\n-----END CERTIFICATE-----\n")
+cert_file.close()
+
 etcd_host = "{{ .Env.ETCD_HOST }}"
 if not etcd_host:
     print "ETCD_HOST not set"
@@ -19,7 +27,7 @@ host = etcd_host
 if ":" in etcd_host:
     host, port = etcd_host.split(":")
 
-client = etcd.Client(host=host, port=int(port), username=etcd_user, password=etcd_pass, protocol=etcd_proto, ca_cert=etcd_cacert)
+client = etcd.Client(host=host, port=int(port), username=etcd_user, password=etcd_pass, protocol=etcd_proto, ca_cert=etcd_cacert_path)
 
 try:
     backends = client.read("/backends")
@@ -32,10 +40,15 @@ except (etcd.EtcdKeyNotFound, KeyError):
 {{ if eq $addrLen 1 }}
 {{ with $address := index $value.Addresses 0 }}
 
+{{ $discoverable := $value.Labels.discoverable }}
+{{ if $discoverable }}
+{{ if eq $discoverable "true" }}
 {{ if $address.HostPort}}
 
 client.write("/backends/{{ index $value.Labels "namespace"}}/{{ index $value.Labels "subdomain"}}/{{printf "%.*s" 12 $value.ID}}", "{{ $local.Env.HOST_IP }}:{{ $address.HostPort }}", ttl=15)
 
+{{ end }}
+{{ end }}
 {{ end }}
 {{ end }}
 {{end}}

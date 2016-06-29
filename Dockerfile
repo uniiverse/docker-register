@@ -14,4 +14,4 @@ ADD . /app
 
 ENV DOCKER_HOST unix:///var/run/docker.sock
 
-CMD docker-gen -interval 10 -watch -notify "python /tmp/register.py" etcd.tmpl /tmp/register.py
+CMD echo $ETCD_CACERT > /app/cacert.pem && docker-gen -interval 10 -watch -notify "python /tmp/register.py" etcd.tmpl /tmp/register.py
