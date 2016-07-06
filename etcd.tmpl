@@ -37,7 +37,7 @@ except (etcd.EtcdKeyNotFound, KeyError):
 {{ $local := . }}
 {{range $key, $value := .}}
 {{ $addrLen := len $value.Addresses }}
-{{ if eq $addrLen 1 }}
+{{ if gt $addrLen 0 }}
 {{ with $address := index $value.Addresses 0 }}
 
 {{ $discoverable := $value.Labels.discoverable }}
